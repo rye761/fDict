@@ -9,8 +9,8 @@ Requires:
 * flask-pymongo
 
 Features:
-	*login system
-	*search
-	*typical dictionary features
+* login system
+* search
+* typical dictionary features
 
 **Project status: incomplete, just started**
