@@ -7,6 +7,7 @@ Requires:
 * mongodb
 * flask-login
 * flask-pymongo
+* flask-bcrypt
 
 Features:
 * login system
