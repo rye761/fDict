@@ -3,10 +3,10 @@
 <form method="POST">
 	<dl>
 		<dt>Username:
-		<dd><input type="text" name="username">
+		<dd><input type="text" class="form-control bottom-extra-margin" name="username">
 		<dt>Password:
-		<dd><input type="password" name="password">
-		<dd><input type="submit" value="Login">
+		<dd><input type="password" class="form-control" name="password">
+		<dd><input type="submit" class="btn btn-primary top-extra-margin" value="Login">
 	</dl>
 </form>
 <p>Don't have an account yet? <a href="{{ url_for('register_user') }}">Register Here</a></p>

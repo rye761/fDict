@@ -3,12 +3,12 @@
 <form action="{{ url_for('register_user') }}" method="POST">
 	<dl>
 		<dt>Username:
-		<dd><input type="text" size="20" name="username">
+		<dd><input type="text" class="form-control bottom-extra-margin" size="20" name="username">
 		<dt>Password:
-		<dd><input type="password" name="password">
+		<dd><input type="password" class="form-control bottom-extra-margin" name="password">
 		<dt>Confirm password
-		<dd><input type="password" name="password_confirm">
-		<dd><input type="submit" value="Register">
+		<dd><input type="password" class="form-control bottom-extra-margin" name="password_confirm">
+		<dd><input type="submit" class="btn btn-primary" value="Register">
 	</dl>
 </form>
 {% endblock %}
