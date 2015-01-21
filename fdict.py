@@ -1,7 +1,8 @@
 from flask import Flask, request, session, g, redirect, url_for, abort, render_template, flash
 from flask.ext.pymongo import PyMongo
-from flask.ext.login import LoginManager
+from flask.ext.login import LoginManager, UserMixin, login_user
 from flask.ext.bcrypt import Bcrypt
+from bson import ObjectId
 
 #Config
 DEBUG = True
@@ -14,6 +15,22 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 bcrypt = Bcrypt(app)
 
+class User(UserMixin):
+    def __init__(self, username, userID):
+        self.username = username
+        self.userID = userID
+    def get_id(self):
+        return str(self.userID)
+
+@login_manager.user_loader
+def load_user(userID):
+    objectID = ObjectId(userID)
+    userObject = mongo.db.fdict_users.find_one({'_id': objectID})
+    if userObject:
+        user = User(userObject['username'], userObject['_id'])
+        return user
+    else:
+        return None
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -28,7 +45,9 @@ def register_user():
         #check that everthing was filled out, and that passwords match
         if username and password and password_confirm and password == password_confirm:
             password_hash = bcrypt.generate_password_hash(password)
-            mongo.db.fdict_users.insert({'username': username, 'password_hash': password_hash})
+            userObjectID =mongo.db.fdict_users.insert({'username': username, 'password_hash': password_hash})
+            user = User(username, userObjectID)
+            login_user(user)
             return "User added"
         else:
             flash('Missing entry or unmatched passwords')
