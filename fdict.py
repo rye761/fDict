@@ -1,6 +1,6 @@
 from flask import Flask, request, session, g, redirect, url_for, abort, render_template, flash
 from flask.ext.pymongo import PyMongo
-from flask.ext.login import LoginManager, UserMixin, login_user
+from flask.ext.login import LoginManager, UserMixin, login_user, logout_user
 from flask.ext.bcrypt import Bcrypt
 from bson import ObjectId
 
@@ -48,15 +48,32 @@ def register_user():
             userObjectID =mongo.db.fdict_users.insert({'username': username, 'password_hash': password_hash})
             user = User(username, userObjectID)
             login_user(user)
-            return "User added"
+            return redirect(url_for('index'))
         else:
             flash('Missing entry or unmatched passwords')
             return redirect(url_for('register_user'))
     else:
         return render_template('register.html')
 
-@app.route('/login')
+@app.route('/login', methods=['GET', 'POST'])
 def login():
-    pass
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        userObject = mongo.db.fdict_users.find_one({'username': username})
+        if userObject and bcrypt.check_password_hash(userObject['password_hash'], password):
+            user = User(userObject['username'], userObject['_id'])
+            login_user(user)
+            return redirect(url_for('index'))
+        else:
+            flash('Invalid credentials')
+            return redirect(url_for('login'))
+    else:
+        return render_template('login.html')
+
+@app.route('/logout')
+def logout():
+    logout_user()
+    return redirect(url_for('index'))
 if __name__ == '__main__':
     app.run()
