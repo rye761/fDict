@@ -1,4 +1,4 @@
-from flask import Flask, request, session, g, redirect, url_for, abort, render_template, flash
+from flask import Flask, request, redirect, url_for, render_template, flash
 from flask.ext.pymongo import PyMongo
 from flask.ext.login import LoginManager, UserMixin, login_user, logout_user
 from flask.ext.bcrypt import Bcrypt
