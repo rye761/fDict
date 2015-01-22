@@ -1,6 +1,6 @@
 from flask import Flask, request, redirect, url_for, render_template, flash
 from flask.ext.pymongo import PyMongo
-from flask.ext.login import LoginManager, UserMixin, login_user, logout_user
+from flask.ext.login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
 from flask.ext.bcrypt import Bcrypt
 from bson import ObjectId
 
@@ -75,5 +75,22 @@ def login():
 def logout():
     logout_user()
     return redirect(url_for('index'))
+
+@app.route('/create', methods=['GET', 'POST'])
+@login_required
+def create():
+    if request.method == 'POST':
+        word = request.form['word']
+        definition = request.form['definition']
+        if word and definition:
+            mongo.db.fdict_words.insert({'user': current_user.userID, 'word': word, 'definition': definition, 'votes': 0, 'voters': []})
+            flash('Definition submitted')
+            return redirect(url_for('index'))
+        else:
+            flash('You need to provide both a word and definition')
+            return redirect(url_for('create'))
+        return redirect(url_for('index'))
+    else:
+        return render_template('create.html')
 if __name__ == '__main__':
     app.run()

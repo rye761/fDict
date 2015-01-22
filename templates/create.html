@@ -1,0 +1,14 @@
+{% extends "layout.html" %}
+{% block body %}
+<h1>Create definition</h1>
+<hr>
+<form action="{{ url_for('create') }}" method="POST">
+	<dl>
+		<dt>Word:
+		<dd><input type="text" class="form-control bottom-extra-margin" name="word">
+		<dt>Definition:
+		<dd><textarea rows="5" cols="40" class="form-control" name="definition"></textarea>
+		<dd><input type="submit" class="btn btn-primary top-extra-margin" value="Submit">
+	</dl>
+</form>
+{% endblock %}
