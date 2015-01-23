@@ -1,4 +1,4 @@
-from flask import Flask, request, redirect, url_for, render_template, flash
+from flask import Flask, request, redirect, url_for, render_template, flash, abort
 from flask.ext.pymongo import PyMongo
 from flask.ext.login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
 from flask.ext.bcrypt import Bcrypt
@@ -92,5 +92,15 @@ def create():
         return redirect(url_for('index'))
     else:
         return render_template('create.html')
+
+@app.route('/view/<definitionid>')
+def view_definition(definitionid):
+    definitionObjectId = ObjectId(definitionid)
+    print(definitionObjectId)
+    definitionObject = mongo.db.fdict_words.find_one({'_id': definitionObjectId})
+    if definitionObject:
+        return render_template('view_definition.html', word=definitionObject['word'], definition=definitionObject['definition'], votes=definitionObject['votes'])
+    else:
+        abort(404)
 if __name__ == '__main__':
     app.run()
