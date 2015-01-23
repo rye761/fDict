@@ -98,9 +98,11 @@ def view_definition(definitionid):
     definitionObjectId = ObjectId(definitionid)
     print(definitionObjectId)
     definitionObject = mongo.db.fdict_words.find_one({'_id': definitionObjectId})
+    definitionUserObject = mongo.db.fdict_users.find_one({'_id': definitionObject['user']})
     if definitionObject:
-        return render_template('view_definition.html', word=definitionObject['word'], definition=definitionObject['definition'], votes=definitionObject['votes'])
+        return render_template('view_definition.html', word=definitionObject['word'], definition=definitionObject['definition'], votes=definitionObject['votes'], user=definitionUserObject)
     else:
         abort(404)
+
 if __name__ == '__main__':
     app.run()

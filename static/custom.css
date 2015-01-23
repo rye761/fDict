@@ -9,3 +9,7 @@
 .bottom-extra-margin {
 	margin-bottom: 10px;
 }
+
+.inline {
+	display: inline;
+}
