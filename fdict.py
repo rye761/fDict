@@ -50,7 +50,7 @@ def register_user():
             login_user(user)
             return redirect(url_for('index'))
         else:
-            flash('Missing entry or unmatched passwords')
+            flash('Missing entry or unmatched passwords', 'danger')
             return redirect(url_for('register_user'))
     else:
         return render_template('register.html')
@@ -66,7 +66,7 @@ def login():
             login_user(user)
             return redirect(url_for('index'))
         else:
-            flash('Invalid credentials')
+            flash('Invalid credentials', 'danger')
             return redirect(url_for('login'))
     else:
         return render_template('login.html')
@@ -84,10 +84,10 @@ def create():
         definition = request.form['definition']
         if word and definition:
             mongo.db.fdict_words.insert({'user': current_user.userID, 'word': word, 'definition': definition, 'votes': 0, 'voters': []})
-            flash('Definition submitted')
+            flash('Definition submitted', 'success')
             return redirect(url_for('index'))
         else:
-            flash('You need to provide both a word and definition')
+            flash('You need to provide both a word and definition', 'danger')
             return redirect(url_for('create'))
         return redirect(url_for('index'))
     else:
