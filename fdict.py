@@ -35,7 +35,11 @@ def load_user(userID):
         return None
 @app.route('/')
 def index():
-    return render_template('index.html')
+    recent_entries = list(mongo.db.fdict_words.find().sort('_id', -1).limit(10))
+    for entry in recent_entries:
+        entry['user_username'] = mongo.db.fdict_users.find_one({'_id': entry['user']})['username']
+    print(recent_entries)
+    return render_template('index.html', recent_entries=recent_entries)
 
 @app.route('/register', methods=['GET', 'POST'])
 def register_user():
