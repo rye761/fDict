@@ -8,6 +8,7 @@ Requires:
 * flask-login
 * flask-pymongo
 * flask-bcrypt
+* flask-jsglue
 
 Features:
 * login system

@@ -1,8 +1,20 @@
 {% extends "layout.html" %}
+{% block extra_head %}
+{{ JSGlue.include() }}
+<script> var defid = "{{ defid }}"; </script>
+<script src="{{ url_for('static', filename='vote.js') }}"></script>
+{% endblock %}
+
 {% block body %}
-<h1>{{ word }}</h1> 
+<h2 class="inline">{{ word }}</h2>
+
+<button id="add_vote_button" onclick="give_vote()" type="button" class="btn btn-success pull-right
+{% if hasVoted and current_user.is_authenticated() %} none {% endif %}">Give Vote</button> 
+<button id="revoke_vote_button" onclick="revoke_vote()" type="button" class="btn btn-danger pull-right
+{% if not hasVoted and current_user.is_authenticated() %} none {% endif %}">Revoke Vote</button>
+
 <hr>
 <p>{{ definition }}</p>
 <hr>
-<p class="inline">Votes: {{ votes }}</p><p class="pull-right"><i>Defined by {{ user['username'] }}</i></p>
+<p class="inline" id="vote-text">Votes: {{ votes }}</p><p class="pull-right"><i>Defined by {{ user['username'] }}</i></p>
 {% endblock %}

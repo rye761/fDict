@@ -1,8 +1,9 @@
-from flask import Flask, request, redirect, url_for, render_template, flash, abort
+from flask import Flask, request, redirect, url_for, render_template, flash, abort, Response, jsonify
 from flask.ext.pymongo import PyMongo
 from flask.ext.login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
 from flask.ext.bcrypt import Bcrypt
 from bson import ObjectId
+from flask_jsglue import JSGlue
 
 #Config
 DEBUG = True
@@ -14,6 +15,7 @@ mongo = PyMongo(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
 bcrypt = Bcrypt(app)
+jsglue = JSGlue(app)
 
 class User(UserMixin):
     def __init__(self, username, userID):
@@ -96,13 +98,48 @@ def create():
 @app.route('/view/<definitionid>')
 def view_definition(definitionid):
     definitionObjectId = ObjectId(definitionid)
-    print(definitionObjectId)
     definitionObject = mongo.db.fdict_words.find_one({'_id': definitionObjectId})
     definitionUserObject = mongo.db.fdict_users.find_one({'_id': definitionObject['user']})
+    if current_user.is_authenticated():
+        if current_user.userID in definitionObject['voters']:
+            hasVoted = True
+        else:
+            hasVoted = False
+    else:
+        hasVoted = False
+
     if definitionObject:
-        return render_template('view_definition.html', word=definitionObject['word'], definition=definitionObject['definition'], votes=definitionObject['votes'], user=definitionUserObject)
+        return render_template('view_definition.html', word=definitionObject['word'], definition=definitionObject['definition'], votes=len(definitionObject['voters']), user=definitionUserObject, defid=definitionid, hasVoted=hasVoted)
     else:
         abort(404)
+
+@app.route('/addvote', methods=['POST'])
+def add_vote():
+    #This function adds a vote for a definition. It is meant to be called using AJAX
+    if current_user.is_authenticated():
+        definitionObjectId = ObjectId(request.form['definition_id'])
+        definitionObject = mongo.db.fdict_words.find_one({'_id': definitionObjectId})
+        if current_user.userID in definitionObject['voters']:
+            abort(501)
+        definitionObject['voters'].append(current_user.userID)
+        mongo.db.fdict_words.save(definitionObject)
+        return jsonify(votes = len(definitionObject['voters']))
+    else:
+        return abort(501)
+        
+@app.route('/revokevote', methods=['POST'])
+def revoke_vote():
+    #This function removes a vote for a definition. It is meant to be called using AJAX
+    if current_user.is_authenticated():
+        definitionObjectId = ObjectId(request.form['definition_id'])
+        definitionObject = mongo.db.fdict_words.find_one({'_id': definitionObjectId})
+        if not current_user.userID in definitionObject['voters']:
+            abort(501)
+        definitionObject['voters'].remove(current_user.userID)
+        mongo.db.fdict_words.save(definitionObject)
+        return jsonify(votes = len(definitionObject['voters']))
+    else:
+        return abort(501)
 
 if __name__ == '__main__':
     app.run()
