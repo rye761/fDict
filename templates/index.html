@@ -5,7 +5,7 @@
 	<ul class="list-group">
 	{% for entry in recent_entries %}
 		<li class="list-group-item">
-			<a href="#">{{ entry['word'] }}</a>
+			<a href="{{ entry['view_url'] }}">{{ entry['word'] }}</a>
 			<p class="pull-right">Defined by {{ entry['user_username'] }}</p>	
 		</li>
 	{% endfor %}
