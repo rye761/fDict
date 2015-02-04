@@ -3,7 +3,7 @@
 <form method="POST">
 	<dl>
 		<dt>Username:
-		<dd><input type="text" class="form-control bottom-extra-margin" name="username">
+		<dd><input type="text" class="form-control bottom-extra-margin" value="{% if username %}{{ username }}{% endif %}" name="username">
 		<dt>Password:
 		<dd><input type="password" class="form-control" name="password">
 		<dd><input type="submit" class="btn btn-primary top-extra-margin" value="Login">

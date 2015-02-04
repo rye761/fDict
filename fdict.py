@@ -58,9 +58,10 @@ def register_user():
             return redirect(url_for('index'))
         else:
             flash('Missing entry or unmatched passwords', 'danger')
-            return redirect(url_for('register_user'))
+            return redirect(url_for('register_user', username=username))
     else:
-        return render_template('register.html')
+        username = request.args.get('username')
+        return render_template('register.html', username=username)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -74,9 +75,10 @@ def login():
             return redirect(url_for('index'))
         else:
             flash('Invalid credentials', 'danger')
-            return redirect(url_for('login'))
+            return redirect(url_for('login', username=username))
     else:
-        return render_template('login.html')
+        username = request.args.get('username')
+        return render_template('login.html', username=username)
 
 @app.route('/logout')
 def logout():
