@@ -16,7 +16,7 @@ Features:
 * typical dictionary features
 
 ###If you want to give it a try
-You will need to have mongodb, and all the dependaecies installed.
+You will need to have mongodb, and all the dependecies installed.
 
 Then use `python fdict.py` assuming you have Python 3.
 
