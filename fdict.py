@@ -39,9 +39,30 @@ def index():
     for entry in recent_entries:
         entry['view_url'] = url_for('view_definition', definitionid=str(entry['_id']))
         entry['user_username'] = mongo.db.fdict_users.find_one({'_id': entry['user']})['username']
-    print(recent_entries)
     return render_template('index.html', recent_entries=recent_entries)
 
+@app.route('/search', methods=['GET'])
+def search_word():
+    query = request.args.get('q')
+    if query:
+        #This is probably a really bad place to put this, but I don't want any entries to not be indexed so for now, here it is.
+        mongo.db.fdict_words.ensure_index([
+            ('word', 'text'),
+        ],
+        name='search_index',
+        weights={
+            'word':100
+        })
+        query = request.args.get('q')
+        results = list(mongo.db.fdict_words.find({'$text': {'$search': query}}))
+        for entry in results:
+            entry['view_url'] = url_for('view_definition', definitionid=str(entry['_id']))
+            entry['user_username'] = mongo.db.fdict_users.find_one({'_id': entry['user']})['username']
+        return render_template('search.html', results=results)
+    else:
+        #This will happen if the user sends an empty search. Just take them back to home and let them know what they did wrong.
+        flash('You need to submit a query to search', 'danger')
+        return redirect(url_for('index'))
 @app.route('/register', methods=['GET', 'POST'])
 def register_user():
     if request.method == 'POST':
