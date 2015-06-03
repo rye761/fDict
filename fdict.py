@@ -45,14 +45,6 @@ def index():
 def search_word():
     query = request.args.get('q')
     if query:
-        #This is probably a really bad place to put this, but I don't want any entries to not be indexed so for now, here it is.
-        mongo.db.fdict_words.ensure_index([
-            ('word', 'text'),
-        ],
-        name='search_index',
-        weights={
-            'word':100
-        })
         query = request.args.get('q')
         results = list(mongo.db.fdict_words.find({'$text': {'$search': query}}))
         for entry in results:
@@ -171,3 +163,10 @@ def revoke_vote():
 
 if __name__ == '__main__':
     app.run()
+    mongo.db.fdict_words.ensure_index([
+        ('word', 'text'),
+    ],
+    name='search_index',
+    weights={
+        'word':100
+    })
