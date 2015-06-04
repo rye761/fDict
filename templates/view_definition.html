@@ -3,16 +3,19 @@
 {{ JSGlue.include() }}
 <script> var defid = "{{ defid }}"; </script>
 <script src="{{ url_for('static', filename='vote.js') }}"></script>
+<script src="{{ url_for('static', filename='delete.js') }}"></script>
 {% endblock %}
 
 {% block body %}
 <h2 class="inline">{{ word }}</h2>
 
 {% if current_user.is_authenticated() %}
+<button id="delete_button" onclick="delete_entry()" type="button" class="btn btn-danger pull-right
+{% if not current_user.userID == user['_id'] %} none {% endif %} define-button-bar">Delete</button> 
 <button id="add_vote_button" onclick="give_vote()" type="button" class="btn btn-success pull-right
-{% if hasVoted %} none {% endif %}">Give Vote</button> 
+{% if hasVoted %} none {% endif %} define-button-bar">Give Vote</button> 
 <button id="revoke_vote_button" onclick="revoke_vote()" type="button" class="btn btn-danger pull-right
-{% if not hasVoted %} none {% endif %}">Revoke Vote</button>
+{% if not hasVoted %} none {% endif %} define-button-bar">Revoke Vote</button>
 {% endif %}
 
 <hr>

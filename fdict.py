@@ -161,6 +161,23 @@ def revoke_vote():
     else:
         return abort(501)
 
+@app.route('/deletedef', methods=['POST'])
+def delete_def():
+    #This function removes an entry if the calling user created it. It is meant to be called using AJAX
+    if current_user.is_authenticated():
+        definitionObjectId = ObjectId(request.form['definition_id'])
+        definitionObject = mongo.db.fdict_words.find_one({'_id': definitionObjectId})
+        definitionUserObject = mongo.db.fdict_users.find_one({'_id': definitionObject['user']})
+        if not current_user.userID ==  definitionUserObject['_id']:
+            abort(501)
+        print('about to delete')
+        resp = Response(None, status=200)
+        mongo.db.fdict_words.remove(definitionObjectId);
+        return resp
+    else:
+        return abort(501)
+        
+
 if __name__ == '__main__':
     app.run()
     mongo.db.fdict_words.ensure_index([
